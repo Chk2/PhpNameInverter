@@ -52,6 +52,14 @@ class NameInverterTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * test_given_simple_name_with_white_spaces_will_return_simple_name
+     */
+    public function testGivenSimpleNameWithWhiteSpacesWillReturnSimpleName()
+    {
+        $this->assertInverted('Name', '     Name ');
+    }
+
+    /**
      * test_given_first_and_last_name_return_last_and_first_name
      */
     public function testGivenFirstAndLastNameReturnLastAndFirstName()
@@ -71,6 +79,7 @@ function invertName($name)
     if (!$name) {
         return '';
     } else {
+        $name = trim($name);
         $names = explode(' ', $name);
         if (count($names) == 1) {
             return $name;
