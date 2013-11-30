@@ -6,7 +6,9 @@
  * Time: 12:32
  */
 
-class NameInverterTest extends PHPUnit_Framework_TestCase {
+namespace Alex;
+
+class NameInverterTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @param $invertedName
@@ -14,7 +16,7 @@ class NameInverterTest extends PHPUnit_Framework_TestCase {
      */
     public function assertInverted($invertedName, $originalName)
     {
-        $this->assertEquals($invertedName, invertName($originalName));
+        $this->assertEquals($invertedName, (new NameInverter())->invertName($originalName));
     }
 
     /**
@@ -123,89 +125,3 @@ class NameInverterTest extends PHPUnit_Framework_TestCase {
     }
 }
 
-/**
- * Invert First and Last names
- *
- * @param $name
- * @return string
- */
-function invertName($name)
-{
-    if (!$name) {
-        return '';
-    } else {
-        return formatName(removeHonorifics(splitNames($name)));
-    }
-}
-
-/**
- * @param $names
- * @return string
- */
-function formatName($names)
-{
-    if (count($names) == 1) {
-        return $names[0];
-    } else {
-        return formatMultiElementName($names);
-    }
-}
-
-/**
- * @param $names
- * @return string
- */
-function formatMultiElementName($names)
-{
-    $postNominal = getPostNominals($names);
-    $firstName = $names[0];
-    $lastName = $names[1];
-    return trim(sprintf('%s %s %s', $lastName, $firstName, $postNominal));
-}
-
-/**
- * @param $names
- * @return string
- */
-function getPostNominals($names)
-{
-    $postNominals = '';
-    if (count($names) > 2) {
-        $postNominalsList = array_slice($names, 2);
-        foreach ($postNominalsList as $pn) {
-            $postNominals .= $pn . ' ';
-        }
-    }
-    return $postNominals;
-}
-
-
-/**
- * @param $names
- */
-function removeHonorifics($names)
-{
-    if (count($names) > 1 && isHonorific($names[0])) {
-        array_shift($names);
-    }
-    return $names;
-}
-
-/**
- * @param $name
- * @return bool
- */
-function isHonorific($name)
-{
-    $honorifics = array('Mme', 'Mlle', 'M.');
-    return in_array($name, $honorifics);
-}
-
-/**
- * @param $name
- * @return array
- */
-function splitNames($name)
-{
-    return preg_split("/[\s]+/", trim($name));
-}
