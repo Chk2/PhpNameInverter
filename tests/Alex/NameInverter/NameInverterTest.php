@@ -66,6 +66,14 @@ class NameInverterTest extends PHPUnit_Framework_TestCase {
     {
         $this->assertInverted('Last First', 'First Last');
     }
+
+    /**
+     * test_first_last_name_with_extra_spaces_between_them_will_return_last_first
+     */
+    public function testFirstLastNameWithExtraSpacesBetweenThemWillReturnLastFirst()
+    {
+        $this->assertInverted('Last First', ' First   Last ');
+    }
 }
 
 /**
@@ -79,12 +87,13 @@ function invertName($name)
     if (!$name) {
         return '';
     } else {
-        $name = trim($name);
-        $names = explode(' ', $name);
+        $names = preg_split("/[\s]+/", trim($name));
+
         if (count($names) == 1) {
-            return $name;
+            return $names[0];
+        } else {
+            return sprintf('%s %s', $names[1], $names[0]);
         }
-        return sprintf('%s %s', $names[1], $names[0]);
     }
 }
  
