@@ -1,0 +1,5 @@
+.idea
+vendor
+build/
+!build/phpcs.xml
+!build/phpmd.xml
