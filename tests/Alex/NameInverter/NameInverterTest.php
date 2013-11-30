@@ -99,6 +99,14 @@ class NameInverterTest extends PHPUnit_Framework_TestCase {
                 array('Last First', 'Mlle First Last'),
             );
         }
+
+    /**
+     * test_post_nominals_stay_at_end
+     */
+    public function testPostNominalsStayAtEnd()
+    {
+        $this->assertInverted('First Last Sr.', 'Last First Sr.');
+    }
 }
 
 /**
@@ -121,7 +129,11 @@ function invertName($name)
         if (count($names) == 1) {
             return $names[0];
         } else {
-            return sprintf('%s %s', $names[1], $names[0]);
+            $postNominal = '';
+            if (count($names) > 2) {
+                $postNominal = $names[2];
+            }
+            return trim(sprintf('%s %s %s', $names[1], $names[0], $postNominal));
         }
     }
 }
