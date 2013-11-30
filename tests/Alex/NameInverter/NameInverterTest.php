@@ -50,6 +50,14 @@ class NameInverterTest extends PHPUnit_Framework_TestCase {
     {
         $this->assertInverted('Name', 'Name');
     }
+
+    /**
+     * test_given_first_and_last_name_return_last_and_first_name
+     */
+    public function testGivenFirstAndLastNameReturnLastAndFirstName()
+    {
+        $this->assertInverted('Last First', 'First Last');
+    }
 }
 
 /**
@@ -62,8 +70,12 @@ function invertName($name)
 {
     if (!$name) {
         return '';
+    } else {
+        $names = explode(' ', $name);
+        if (count($names) == 1) {
+            return $name;
+        }
+        return sprintf('%s %s', $names[1], $names[0]);
     }
-
-    return $name;
 }
  
