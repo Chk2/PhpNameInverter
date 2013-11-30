@@ -106,6 +106,20 @@ class NameInverterTest extends PHPUnit_Framework_TestCase {
     public function testPostNominalsStayAtEnd()
     {
         $this->assertInverted('First Last Sr.', 'Last First Sr.');
+        $this->assertInverted('First Last BS. PhD.', 'Last First BS. PhD.');
+    }
+
+    /**
+     * @ignored
+     * test_with_commas_and_other_punctuation_marks
+     */
+
+    /**
+     * Just an integration test
+     */
+    public function testIntegration()
+    {
+        $this->assertInverted('Doe John Sr. PhD, EdD, DMus, DArts', ' John     Doe Sr.  PhD, EdD, DMus,    DArts  ');
     }
 }
 
@@ -120,21 +134,78 @@ function invertName($name)
     if (!$name) {
         return '';
     } else {
-        $names = preg_split("/[\s]+/", trim($name));
-
-        if (count($names) > 1 && in_array($names[0], array('Mme', 'Mlle', 'M.'))) {
-            array_shift($names);
-        }
-
-        if (count($names) == 1) {
-            return $names[0];
-        } else {
-            $postNominal = '';
-            if (count($names) > 2) {
-                $postNominal = $names[2];
-            }
-            return trim(sprintf('%s %s %s', $names[1], $names[0], $postNominal));
-        }
+        return formatName(removeHonorifics(splitNames($name)));
     }
 }
- 
+
+/**
+ * @param $names
+ * @return string
+ */
+function formatName($names)
+{
+    if (count($names) == 1) {
+        return $names[0];
+    } else {
+        return formatMultiElementName($names);
+    }
+}
+
+/**
+ * @param $names
+ * @return string
+ */
+function formatMultiElementName($names)
+{
+    $postNominal = getPostNominals($names);
+    $firstName = $names[0];
+    $lastName = $names[1];
+    return trim(sprintf('%s %s %s', $lastName, $firstName, $postNominal));
+}
+
+/**
+ * @param $names
+ * @return string
+ */
+function getPostNominals($names)
+{
+    $postNominals = '';
+    if (count($names) > 2) {
+        $postNominalsList = array_slice($names, 2);
+        foreach ($postNominalsList as $pn) {
+            $postNominals .= $pn . ' ';
+        }
+    }
+    return $postNominals;
+}
+
+
+/**
+ * @param $names
+ */
+function removeHonorifics($names)
+{
+    if (count($names) > 1 && isHonorific($names[0])) {
+        array_shift($names);
+    }
+    return $names;
+}
+
+/**
+ * @param $name
+ * @return bool
+ */
+function isHonorific($name)
+{
+    $honorifics = array('Mme', 'Mlle', 'M.');
+    return in_array($name, $honorifics);
+}
+
+/**
+ * @param $name
+ * @return array
+ */
+function splitNames($name)
+{
+    return preg_split("/[\s]+/", trim($name));
+}
