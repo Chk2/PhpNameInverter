@@ -18,19 +18,6 @@ class NameInverterTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @return array
-     */
-    public static function FalseValuesProvider()
-    {
-        return array(
-            array('', null),
-            array('', false),
-            array('', ''),
-            array('', 0),
-        );
-    }
-
-    /**
      * test_given_false_value_return_empty_string
      *
      * @dataProvider FalseValuesProvider
@@ -42,6 +29,19 @@ class NameInverterTest extends PHPUnit_Framework_TestCase {
     {
         $this->assertInverted($invertedName, $originalName);
     }
+
+        /**
+         * @return array
+         */
+        public static function FalseValuesProvider()
+        {
+            return array(
+                array('', null),
+                array('', false),
+                array('', ''),
+                array('', 0),
+            );
+        }
 
     /**
      * test_given_simple_name_return_simple_name
@@ -74,6 +74,31 @@ class NameInverterTest extends PHPUnit_Framework_TestCase {
     {
         $this->assertInverted('Last First', ' First   Last ');
     }
+
+    /**
+     * test_given_first_last_name_with_honorific_ignore_it_when_returning_last_first
+     *
+     * @dataProvider providerHonorifics
+     *
+     * @param $expectedName
+     * @param $nameWithHonorific
+     */
+    public function testGivenFirstLastNameWithHonorificIgnoreItWhenReturningLastFirst($expectedName, $nameWithHonorific)
+    {
+        $this->assertInverted($expectedName, $nameWithHonorific);
+    }
+
+        /**
+         * @return array
+         */
+        public static function providerHonorifics()
+        {
+            return array(
+                array('Last First', 'M. First Last'),
+                array('Last First', 'Mme First Last'),
+                array('Last First', 'Mlle First Last'),
+            );
+        }
 }
 
 /**
@@ -88,6 +113,10 @@ function invertName($name)
         return '';
     } else {
         $names = preg_split("/[\s]+/", trim($name));
+
+        if (count($names) > 1 && in_array($names[0], array('Mme', 'Mlle', 'M.'))) {
+            array_shift($names);
+        }
 
         if (count($names) == 1) {
             return $names[0];
