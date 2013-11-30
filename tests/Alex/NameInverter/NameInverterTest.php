@@ -9,14 +9,46 @@
 class NameInverterTest extends PHPUnit_Framework_TestCase {
 
     /**
-     * test_given_false_value_return_empty_string
+     * @param $invertedName
+     * @param $originalName
      */
-    public function testGivenFalseValueReturnEmptyString()
+    public function assertInverted($invertedName, $originalName)
     {
-        $this->assertEquals('', invertName(null));
-        $this->assertEquals('', invertName(false));
-        $this->assertEquals('', invertName(''));
-        $this->assertEquals('', invertName(0));
+        $this->assertEquals($invertedName, invertName($originalName));
+    }
+
+    /**
+     * @return array
+     */
+    public static function FalseValuesProvider()
+    {
+        return array(
+            array('', null),
+            array('', false),
+            array('', ''),
+            array('', 0),
+        );
+    }
+
+    /**
+     * test_given_false_value_return_empty_string
+     *
+     * @dataProvider FalseValuesProvider
+     *
+     * @param $invertedName
+     * @param $originalName
+     */
+    public function testGivenFalseValueReturnEmptyString($invertedName, $originalName)
+    {
+        $this->assertInverted($invertedName, $originalName);
+    }
+
+    /**
+     * test_given_simple_name_return_simple_name
+     */
+    public function testGivenSimpleNameReturnSimpleName()
+    {
+        $this->assertInverted('Name', 'Name');
     }
 }
 
@@ -28,6 +60,10 @@ class NameInverterTest extends PHPUnit_Framework_TestCase {
  */
 function invertName($name)
 {
-    return '';
+    if (!$name) {
+        return '';
+    }
+
+    return $name;
 }
  
